@@ -1,22 +1,37 @@
 ---
-# Front matter
-lang: ru-RU
-title: "Отчёт по лабораторной работе №1"
-subtitle: "Установка и конфигурация операционной системы на виртуальную машину. Управление версиями"
-author: "Голощапова Ирина Борисовна"
+## Front matter
+title: "Лабораторная работа 1"
+subtitle: "Установка и конфигурация операционной системы на виртуальную машину"
+author: "Лушин Артём Андреевич"
 
-# Formatting
+## Generic otions
+lang: ru-RU
 toc-title: "Содержание"
+
+## Bibliography
+bibliography: bib/cite.bib
+csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
+
+## Pdf output format
 toc: true # Table of contents
-toc_depth: 2
+toc-depth: 2
 lof: true # List of figures
-lot: true # List of tables
 fontsize: 12pt
 linestretch: 1.5
-papersize: a4paper
+papersize: a4
 documentclass: scrreprt
-polyglossia-lang: russian
-polyglossia-otherlangs: english
+## I18n polyglossia
+polyglossia-lang:
+  name: russian
+  options:
+	- spelling=modern
+	- babelshorthands=true
+polyglossia-otherlangs:
+  name: english
+## I18n babel
+babel-lang: russian
+babel-otherlangs: english
+## Fonts
 mainfont: PT Serif
 romanfont: PT Serif
 sansfont: PT Sans
@@ -24,289 +39,191 @@ monofont: PT Mono
 mainfontoptions: Ligatures=TeX
 romanfontoptions: Ligatures=TeX
 sansfontoptions: Ligatures=TeX,Scale=MatchLowercase
-monofontoptions: Scale=MatchLowercase
+monofontoptions: Scale=MatchLowercase,Scale=0.9
+## Biblatex
+biblatex: false
+biblio-style: "gost-numeric"
+biblatexoptions:
+  - parentracker=true
+  - backend=biber
+  - hyperref=auto
+  - language=auto
+  - autolang=other*
+  - citestyle=gost-numeric
+## Pandoc-crossref LaTeX customization
+figureTitle: "Рис."
+tableTitle: "Таблица"
+listingTitle: "Листинг"
+lofTitle: "Список иллюстраций"
+lolTitle: "Листинги"
+## Misc options
 indent: true
-pdf-engine: lualatex
 header-includes:
-  - \linepenalty=10 # the penalty added to the badness of each line within a paragraph (no associated penalty node) Increasing the value makes tex try to have fewer lines in the paragraph.
-  - \interlinepenalty=0 # value of the penalty (node) added after each line of a paragraph.
-  - \hyphenpenalty=50 # the penalty for line breaking at an automatically inserted hyphen
-  - \exhyphenpenalty=50 # the penalty for line breaking at an explicit hyphen
-  - \binoppenalty=700 # the penalty for breaking a line at a binary operator
-  - \relpenalty=500 # the penalty for breaking a line at a relation
-  - \clubpenalty=150 # extra penalty for breaking after first line of a paragraph
-  - \widowpenalty=150 # extra penalty for breaking before last line of a paragraph
-  - \displaywidowpenalty=50 # extra penalty for breaking before last line before a display math
-  - \brokenpenalty=100 # extra penalty for page breaking after a hyphenated line
-  - \predisplaypenalty=10000 # penalty for breaking before a display
-  - \postdisplaypenalty=0 # penalty for breaking after a display
-  - \floatingpenalty = 20000 # penalty for splitting an insertion (can only be split footnote in standard LaTeX)
-  - \raggedbottom # or \flushbottom
+  - \usepackage{indentfirst}
   - \usepackage{float} # keep figures where there are in the text
   - \floatplacement{figure}{H} # keep figures where there are in the text
 ---
 
-# Цели и задачи лабораторной работы
+# Цель работы
 
-## Цель работы
+Приобретение практических навыков установки операционной системы на виртуальную машину, настройки минимально необходимых для дальнейшей работы сервисов. 
 
-Приобретение практических навыков
-установки операционной системы на виртуальную машину, настройки минимально необходимых для дальнейшей работы сервисов.
+# Задание
 
-## Задачи работы
+Здесь приводится описание задания в соответствии с рекомендациями
+методического пособия и выданным вариантом.
 
-- Установить операционную систему на виртуальную машину
-- Изучить идеологию и применение средств контроля версий.
-- Освоить умения по работе с git.
+# Теоретическое введение
 
 
+Лабораторная работа подразумевает установку на виртуальную машину
+VirtualBox (https://www.virtualbox.org/) операционной системы Linux
+(дистрибутив Rocky (https://rockylinux.org/)).
 
+Выполнение работы возможно как в дисплейном классе факультета
+физико-математических и естественных наук РУДН, так и дома. Описание
+выполнения работы приведено для дисплейного класса со следующими характеристиками:
 
+– Intel Core i3-550 3.2 GHz, 4 GB оперативной памяти, 20 GB свободного
+места на жёстком диске;
+
+– ОС Linux Gentoo (http://www.gentoo.ru/);
+
+– VirtualBox верс. 6.1 или старше;
+
+– каталог с образами ОС для работающих в ди
 
 # Выполнение лабораторной работы
 
+1) Я создал новую виртуальную машину с именем "4sem" и установил тип Linux (сделал фотографию раньше, чем поставил тип"
 
-## Установка дистрибутива Rocky
+![Имя машины и тип ОС](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/1.jpg){#fig:001 width=70%}
 
-1. Открыла у себя на компьютере установленную заранее VirtualBox и создала новую виртуальную машину Rocky (рис. @fig:01):
+2) Далее я выделил 11086МБ основной памяти и 10 процессоров. 
 
+![Выделение основной памяти и процессоров](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/2.jpg){#fig:002 width=70%}
 
-![Имя и операционная система вм](image/1.png){#fig:01 width=50%}
+3) Создал новый виртуальный жёсткий диск и выделил на него 110 Гигабайт. В новой версии VirtualBox нет возможности указать тип диска и он ставится автоматически.
 
+![Создание виртуального жёсткого диска](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/3.jpg){#fig:003 width=70%}
 
-![Виртуальный жесткий диск](image/2.png){#fig:02 width=50%}
+4) Запустил виртуальную машину и поставил в качестве языка интерфейса - Английский (United States) 
 
+![Установка языка интерфейся](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/4.jpg){#fig:004 width=70%}
 
-![Итоговая конфигурация для вм](image/3.png){#fig:03 width=50%}
+5) В окне выбора программ поставил базовое оборудование - Server with GUI, а в разделе Development Tools.
 
+![Окно Настройки установки программ](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/5.jpg){#fig:005 width=70%}
 
-2. Зашла в настройки созданной новой виртуальной машины и добавила заранее установленный оптический диск (рис. @fig:04):
+6) В следующем окне отключить функцию KDUMP, убрав галочку. 
 
-![Добавление оптического диска](image/4.png){#fig:04 width=50%}
+![Отключение KDUMР](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/6.jpg){#fig:006 width=70%}
 
+7) В разделе сети установил сеть и задал имя узла "aalushin.localdomin" (скриншот сделан до переименования)
 
-3. Запустила созданную виртуальную машину и применила следующие настройки (рис. @fig:05):
+![Сеть и имя узла](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/7.jpg){#fig:007 width=70%}
 
+8) Установил москвоское время. Регион - Европа, город - Москва. 
 
-![Установка языка](image/5.png){#fig:05 width=50%}
+![Установка времени](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/8.jpg){#fig:008 width=70%}
 
-![Выбор программ](image/6.png){#fig:06 width=50%}
+9) В качестве раскладки клавиатуры поставил английскую, а затем русскую. То есть при входе автоматически включается английская раскладка, при необходимости переключается на русскую. 
 
+![Раскладка клавиатуры](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/9.jpg){#fig:009 width=70%}
 
-![Подключение сети и добавление имени узла](image/7.png){#fig:07 width=50%}
+10) После всех действия установил пароль для root-пользователя. 
 
+![Пароль для root](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/10.jpg){#fig:010 width=70%}
 
-![Создание пароля root](image/8.png){#fig:08 width=50%}
+11) Создал пользователя. Имя пользователя такое же, как в дисплейных классах. Добавил пользователю возможность администратора. 
 
+![Создание пользователя](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/11.jpg){#fig:011 width=70%}
 
-4. Перезупустила систему для корректной установки.
+12) После установки и ввода всех данных начинаю загрузку образа.
 
-5. Указала свое полное имя и имя пользователя (рис. @fig:09):
+![Установка образа](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/12.jpg){#fig:012 width=70%}
 
-![Имя пользователя](image/9.png){#fig:09 width=50%}
+# Домашнее задание
 
+1) С помощью команды "dmesg" нашел информацию о версии ядра Linux
 
-6. Подключила образ диска дополнений гостевой ОС (рис. @fig:10):
+![Версия ядра Linux](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/13.png){#fig:013 width=70%}
 
-![Образ диска дополнений гостевой ОС](image/10.png){#fig:10 width=50%}
+2) С помощью команды "dmesg" нашел информацию о частоте процессора
 
+![Частота процессора](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/14.jpg){#fig:014 width=70%}
 
-![Загрузка образа диска дополнений гостевой ОС](image/11.png){#fig:11 width=50%}
+3) С помощью команды "dmesg" нашел информацию о моделе процессора
 
+![Модель процессора](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/15.jpg){#fig:015 width=70%}
 
+4) С помощью команды "dmesg" нашел информацию об объёме доступной оперативной памяти. Максимальная оперативная память равно 131072 килобайта.
 
-7. Проверила на корректность имя хоста (рис. @fig:12):
+![Объём оперативной памяти](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/16.jpg){#fig:016 width=70%}
 
-![Имя хоста](image/12.png){#fig:12 width=50%}
+5) С помощью команды "dmesg" определил тип обнаруженного тепловизора
 
+![Обнаруженный тепловизор](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/17.jpg){#fig:017 width=70%}
 
-8. При помощи команды **dmesg | grep -i "то, что ищем"** получила следующие сведения: 
+6) С помощью команды "dmesg" определил тип файловой системы корневого раздела. Так же аналогично можно узнать тип файловых систем с помощью команды "df -T" и под словом "Type" написан тип. В моём случае это - xfs.
 
-- версия ядра (рис. @fig:13):
+![Тип файловых систем](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/19.jpg){#fig:019 width=70%}
 
+![Тип файловых систем с помощью df](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/20.jpg){#fig:020 width=70%}
 
-![Версия ядра](image/13.png){#fig:13 width=50%}
+7) С помощью команды "dmesg" определил последовательность монтирования файловых систем.
 
+![Последовательность монтирования файловых систем](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab1/report/image/18.jpg){#fig:018 width=70%}
 
-- частота процессора (рис. @fig:14):
-
-![частота процессора](image/14.png){#fig:14 width=50%}
-
-- модель процессора (рис. @fig:15):
-
-![модель процессора](image/15.png){#fig:15 width=50%}
-
-- объем доступной оперативной памяти (рис. @fig:16):
-
-![объем доступной оперативной памяти](image/16.png){#fig:16 width=50%}
-
-- тип обнаруженного гипервизора (рис. @fig:17):
-
-![тип обнаруженного гипервизора](image/17.png){#fig:17 width=50%}
-
-- тип файловой системы корневого раздела (рис. @fig:18):
-
-
-![тип файловой системы корневого раздела](image/18.png){#fig:18 width=50%}
-
-- последовательность монтирования файловых систем (рис. @fig:19):
-
-![последовательность монтирования файловых систем](image/19.png){#fig:19 width=50%}
-
-
-
-
-
-
-
-
-## Настройка git
-
-1. Задала имя и email владельца репозитория (рис. @fig:20):
-
-
-![Задание имени и email владельца репозитория](image/20.png){#fig:20 width=50%}
-
-2. Настроила utf-8 в выводе сообщений git (рис. @fig:21):
-
-![Настройка utf-8](image/21.png){#fig:21 width=50%}
-
-3. Настроила верификацию и подписание коммитов git. Задала имя начальной ветки (будем называть её master) (рис. @fig:22):
-
-![Задание начальной ветки](image/22.png){#fig:22 width=50%}
-
-
-4. Параметр autocrlf, Параметр safecrlf (рис. @fig:23):
-
-![Параметр autocrlf, Параметр safecrlf](image/23.png){#fig:23 width=50%}
-
-## Создание ключей
-
-5. Добавление ssh ключей (рис. @fig:24):
-
-![Добавление ssh ключей](image/24.png){#fig:24 width=50%}
-
-
-![Добавление ssh ключей (2)](image/25.png){#fig:25 width=50%}
-
-
-
-6. Добавление gpg ключей (рис. @fig:26):
-
-![Добавление gpg ключей](image/26.png){#fig:26 width=50%}
-
-
-![Добавление gpg ключей (2)](image/27.png){#fig:27 width=50%}
-
-
-
-
-## Настройка автоматических подписей коммитов git
-
-7. Настроила автоматические подписи (рис. @fig:28):
-
-![Настройка автоматических подписей коммитов git](image/28.png){#fig:28 width=50%}
-
-
-
-## Настройка gh
-
-8. Прошла авторизацию  (рис. @fig:29): 
-
-
-![Авторизация на гит](image/29.png){#fig:29 width=50%}
-
-
-![Авторизация на гит](image/30.png){#fig:30 width=50%}
-
-
-
-## Создание репозитория курса
-
-7. Создала репозиторий согласно шаблону  (рис. @fig:31): 
-
-
-![Создание репозитория](image/31.png){#fig:31 width=50%}
-
-![Создание репозитория (2)](image/32.png){#fig:32 width=50%}
-
-
-
-
-
-## Настройка каталога курса
-
-8. Перешла в каталог курса, удалила ненужные файлы, создала необходимые каталоги и отправила файлы на сервер  (рис. @fig:33): 
-
-![Настройка каталога курса](image/33.png){#fig:33 width=50%}
-
+![](){#fig:01 width=70%}
 
 # Выводы
 
-В ходе лабораторной работы нам удалось:
+Я приобрёл практические навыки установки операционной системы на виртуальную машину. Настроил минимально необходимые для дальнейшей работы сервисы
 
-- Установить операционную систему на виртуальную машину.
+# Контрольные вопросы
 
-- Изучить идеологию и применение средств контроля версий.
+1) Какую информацию содержит учётная запись пользователя? 
 
-- Освоить умения по работе с git.
+Учётная запись пользователя - это запись, которая содержит сведения, необходимые для идентификации пользователя при подключении к системе, а также информацию для авторизации и учёта. Это имя пользователя и пароль
 
+2) Укажите команды терминала и приведите пример 
 
+- для получения справки по команде: имя программы --help. dmesg --help
 
+- для перемещения по файловой системе: cd путь. cd work
 
-# Ответы на вопросы
+- для просмотра содержимого каталога: ls - l. ls work
 
-1. Какую информацию содержит учётная запись пользователя?
+- для определения объёма каталога du имя_папки. du work
 
-Учётная запись пользователя - это запись, которая содержит сведения, необходимые для 
-идентификации пользователя при подключении к системе, а также информацию для 
-авторизации и учёта. Это имя пользователя и пароль
+- для создания / удаления каталогов / файлов: создание каталога - mkdir, удаление файла или каталога - rm -r, создание файла - touch
 
-2. . Укажите команды терминала и приведите примеры:
+- для создания определённых прав на файл/каталог: chmod разрешение имя_файла. chown новый_владелец - для смены владельца
 
-– для получения справки по команде: «имя программы --help»
+- для просмотра историй команд: history
 
-– для просмотра содержимого каталога: «ls -l»
+3) Что такое файловая система? Приведите пример с краткой характеристикой. 
 
-– для определения объёма каталога: «du имя_папки»
+Фа́йловая систе́ма (англ. file system) — порядок, определяющий способ организации, хранения и именования данных на носителях информации в компьютерах, а также в другом электронном оборудовании: цифровых фотоаппаратах, мобильных телефонах и т. п.
 
-– для создания / удаления каталогов / файлов: создание - «mkdir», удаление - «rm» 
+• Для носителей с произвольным доступом (например, жёсткий диск): FAT32, HPFS, ext2 и др. Поскольку доступ к дискам в несколько раз медленнее, чем доступ к оперативной памяти, для прироста производительности во многих файловых системах применяется асинхронная запись изменений на диск. Для этого применяется либо журналирование, например, в ext3, ReiserFS, JFS, NTFS, XFS, либо механизм soft updates и др. Журналирование широко распространено в Linux, применяется в NTFS. Soft updates — в BSD системах.
 
-или для рекурсивного удаления – «rm -r»
+• Для носителей с последовательным доступом (например, магнитные ленты): QIC и др.
 
-– для задания определённых прав на файл / каталог: изменение расширения 
-доступа - «chmod разрешение имя_файла»; смена владельца – «chown
-новый_владелец имя_файла»
+• Для оптических носителей — CD и DVD: ISO9660, HFS, UDF и др.
 
-– для просмотра истории команд: «history»
+• Виртуальные файловые системы: AEFS и др.
 
+• Сетевые файловые системы: NFS, CIFS, SSHFS, GmailFS и др.
 
-3. Что такое файловая система? Приведите примеры с краткой характеристикой. 
+• Для флэш-памяти: YAFFS, ExtremeFFS, exFAT
 
-Фа́йловая систе́ма (англ. file system) — порядок, определяющий способ организации, хранения и именования данных на носителях информации в компьютерах, а также в другом электронном оборудовании: цифровых фотоаппаратах, мобильных 
-телефонах и т. п.
+4) Как посмотреть, какие файловые системы подмонтированы в ОС?
 
-- Для носителей с произвольным доступом (например, жёсткий 
-диск): FAT32, HPFS, ext2 и др. Поскольку доступ к дискам в несколько раз медленнее, чем доступ к оперативной памяти, для прироста производительности во многих файловых системах применяется асинхронная запись изменений на диск. 
-Для этого применяется либо журналирование, например, 
-в ext3, ReiserFS, JFS, NTFS, XFS, либо механизм soft updates и др. Журналирование 
-широко распространено в Linux, применяется в NTFS. Soft updates — в BSD 
-системах.
-- Для носителей с последовательным доступом (например, магнитные ленты): QIC и 
-др.
-- Для оптических носителей — CD и DVD: ISO9660, HFS, UDF и др.
-- Виртуальные файловые системы: AEFS и др.
-- Сетевые файловые системы: NFS, CIFS, SSHFS, GmailFS и др.
-- Для флэш-памяти: YAFFS, ExtremeFFS, exFAT
+$ findmnt –mtab
 
+5) Как удалить зависший процесс?
 
-4. Как посмотреть, какие файловые системы подмонтированы в ОС?
+команды: kill, pgrep, pkill, killall
 
-**$ findmnt --mtab**
-
-
-
-# Библиография
-1. [Git - система контроля версий](https://github.com/)
-
-2. [Rocky Linux](https://rockylinux.org/)
