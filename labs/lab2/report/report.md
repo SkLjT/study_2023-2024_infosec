@@ -1,22 +1,37 @@
 ---
-# Front matter
-lang: ru-RU
-title: "Отчёт по лабораторной работе №1"
+## Front matter
+title: "Лабораторная работа 2"
 subtitle: "Дискреционное разграничение прав в Linux. Основные атрибуты"
-author: "Голощапова Ирина Борисовна"
+author: "Лушин Артём Андреевич"
 
-# Formatting
+## Generic otions
+lang: ru-RU
 toc-title: "Содержание"
+
+## Bibliography
+bibliography: bib/cite.bib
+csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
+
+## Pdf output format
 toc: true # Table of contents
-toc_depth: 2
+toc-depth: 2
 lof: true # List of figures
-lot: true # List of tables
 fontsize: 12pt
 linestretch: 1.5
-papersize: a4paper
+papersize: a4
 documentclass: scrreprt
-polyglossia-lang: russian
-polyglossia-otherlangs: english
+## I18n polyglossia
+polyglossia-lang:
+  name: russian
+  options:
+	- spelling=modern
+	- babelshorthands=true
+polyglossia-otherlangs:
+  name: english
+## I18n babel
+babel-lang: russian
+babel-otherlangs: english
+## Fonts
 mainfont: PT Serif
 romanfont: PT Serif
 sansfont: PT Sans
@@ -24,129 +39,95 @@ monofont: PT Mono
 mainfontoptions: Ligatures=TeX
 romanfontoptions: Ligatures=TeX
 sansfontoptions: Ligatures=TeX,Scale=MatchLowercase
-monofontoptions: Scale=MatchLowercase
+monofontoptions: Scale=MatchLowercase,Scale=0.9
+## Biblatex
+biblatex: true
+biblio-style: "gost-numeric"
+biblatexoptions:
+  - parentracker=true
+  - backend=biber
+  - hyperref=auto
+  - language=auto
+  - autolang=other*
+  - citestyle=gost-numeric
+## Pandoc-crossref LaTeX customization
+figureTitle: "Рис."
+tableTitle: "Таблица"
+listingTitle: "Листинг"
+lofTitle: "Список иллюстраций"
+lolTitle: "Листинги"
+## Misc options
 indent: true
-pdf-engine: lualatex
 header-includes:
-  - \linepenalty=10 # the penalty added to the badness of each line within a paragraph (no associated penalty node) Increasing the value makes tex try to have fewer lines in the paragraph.
-  - \interlinepenalty=0 # value of the penalty (node) added after each line of a paragraph.
-  - \hyphenpenalty=50 # the penalty for line breaking at an automatically inserted hyphen
-  - \exhyphenpenalty=50 # the penalty for line breaking at an explicit hyphen
-  - \binoppenalty=700 # the penalty for breaking a line at a binary operator
-  - \relpenalty=500 # the penalty for breaking a line at a relation
-  - \clubpenalty=150 # extra penalty for breaking after first line of a paragraph
-  - \widowpenalty=150 # extra penalty for breaking before last line of a paragraph
-  - \displaywidowpenalty=50 # extra penalty for breaking before last line before a display math
-  - \brokenpenalty=100 # extra penalty for page breaking after a hyphenated line
-  - \predisplaypenalty=10000 # penalty for breaking before a display
-  - \postdisplaypenalty=0 # penalty for breaking after a display
-  - \floatingpenalty = 20000 # penalty for splitting an insertion (can only be split footnote in standard LaTeX)
-  - \raggedbottom # or \flushbottom
+  - \usepackage{indentfirst}
   - \usepackage{float} # keep figures where there are in the text
   - \floatplacement{figure}{H} # keep figures where there are in the text
 ---
 
-# Цели и задачи лабораторной работы
+# Цель работы
 
-## Цели и задачи работы
-
-Получение практических навыков работы в консоли с атрибутами файлов, закрепление теоретических основ дискреционного разграничения доступа в современных системах с открытым кодом на базе ОС Linux.
-
-
+Получение практических навыков работы в консоли с атрибутами файлов, закрепление теоретических основ дискреционного разграничения доступа в современных системах с открытым кодом на базе ОС Linuх
 
 
 # Выполнение лабораторной работы
 
-1. В установленной при выполнении предыдущей лабораторной работы операционной системе создала учётную запись пользователя guest (использую учётную запись администратора). Задала пароль для пользователя guest (рис. @fig:01):
+1) Перешёл в учётную запись с правами администратора и создал нового пользователя "guest"
 
+![Создание нового пользователя](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/1.jpg){#fig:001 width=70%}
 
-![Создание учетной записи](image/1.png){#fig:01 width=50%}
+2) Установил пароль на нового пользователя. 
 
-2. Войшла в систему от имени пользователя guest. 
-Определила директорию, в которой нахожусь, командой $pwd$. Она не оказалась домашней, поэтому осуществила переход в домашнюю директорию (рис. @fig:02):
+![Установка пароля](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/2.jpg){#fig:002 width=70%}
 
+3) Перешёл в нового пользователя и с помощью команды "PWD" узнал, где я нахожусь. Потом перешёл в домашнюю директорию с помощью команды "cd".
 
-![Домашняя директория](image/2.png){#fig:02 width=50%}
+![Домашняя директория](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/3.jpg){#fig:003 width=70%}
 
+4) С помощью команды "whoami" уточнил имя пользователя 
 
-3. Уточнила имя пользователя, его группу, а также группы, куда входит пользователь, командой id. Выведенные значения uid, gid и др. запомнила. Сравнила вывод id с выводом команды groups (рис. @fig:03):
+![Имя пользователя](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/4.jpg){#fig:004 width=70%}
 
+5) Уточнил имя пользователя, группу и группу, куда входит пользователь. Сравнил данные, имя пользователя везде одинаковое.
 
+![Команда id](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/5.jpg){#fig:005 width=70%}
 
-![Имя пользователя, группы](image/3.png){#fig:03 width=50%}
+6) С помощью команды "cat /etc/passwd" нашёл своего пользователя. Затем ввёл команду "cat /etc/passwd | grep guest", чтобы получить именно строку с моим именем.
 
+![Поиск с помощью сat](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/6.jpg){#fig:006 width=70%}
 
-4. Просмотрела файл /etc/passwd командой $cat /etc/passwd$
-Найшла в нём свою учётную запись. Определила uid, gid пользователя (рис. @fig:04):
- 
-![файл /etc/passwd](image/4.png){#fig:04 width=50%}
+![Поиск с уточнением](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/7.jpg){#fig:007 width=70%}
 
+7) С помощью команды "ls -l /home/" определил директории, которые находится с папке home. На каждой из директорий установлены все права для владельца директории. 
 
+![Определение директорий](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/8.jpg){#fig:008 width=70%}
 
-5. Определите существующие в системе директории командой
-    $ls -l /home/$
-Удалось ли вам получить список поддиректорий директории /home? Какие права установлены на директориях? (рис. @fig:05):
+8) Я проверил какие расширенные атрибуты установлены в поддерикториях с помощью команды "lsattr /home". Прочитать атрибуты для директории, которая относится к пользователю "aalushin" я не смог, но атрибуты директории "guest" у меня вывелись. 
 
+![Определение расширенных атрибутов](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/9.jpg){#fig:009 width=70%}
 
-![Существующие в системе директории](image/5.png){#fig:05 width=50%}
+9) Я перешел в домашнюю директорию и создал папку "dir1". С помощью команды "ls -l" и "lsattr" определил, какие права и расширения атрибутов стоят для папки. Папка имеет практически все права, но нет атрибутов.
 
+![Анализ новой папки](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/11.jpg){#fig:010 width=70%}
 
-6. Проверила, какие расширенные атрибуты установлены на поддиректориях, находящихся в директории /home, командой:
-$lsattr /home$. (рис. @fig:06):
+10) С помощью команды "chmod 000 dir1" я снял все права с папки.
 
+![Снятие прав](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/12.jpg){#fig:011 width=70%}
 
-![Попытка посмотреть расширенные атрибуты](image/6.png){#fig:06 width=50%}
+11) Я попытался создать файл внутри директории, но мне выдало ошибку. ИЗ-за того, что я забрал все права, включая права на создание файлов, я не могу создать файл внутри этой папки. Так же я забрал и права на просмотр, то есть я не могу посмотреть содержимое папки. 
 
+![Проверка прав](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/13.jpg){#fig:012 width=70%}
 
-Не удалось увидеть расширенные атрибуты директории, так как отказано в доступе.
+12) Я заполнил таблицу "Установленные права и разрешенные действия". Все ответы определил опытным путём, то есть проверил. В данной таблици я рассмотрел всего 64 возможных варианта. На самом деле их больше, но в задании необходимо рассмотреть всего 64 варианта. В таблице зелёным + отмечено то, что возможно делать, при выдаче определённых прав на папку и файл. А красным - отмечено то, что нельзя сделать при определённых правах.
 
+![Составление первой таблицы](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/14.jpg){#fig:013 width=70%}
 
-7. Создала в домашней директории поддиректорию dir1 командой
-mkdir dir1
-Определила командами ls -l и lsattr, какие права доступа и расширенные атрибуты были выставлены на директорию dir1 (рис. @fig:07):
+13) Основываясь на первой таблице, я заполнил вторую таблицу "Минимальные права для совершения операции". То есть для выполнения каждого действия я вписал минимальные права, которые необходимы для директории и файла. В таблице "ООО" означает, как 000, то есть права со всеми нулями. 
 
-
-![Поддиректория dir1](image/7.png){#fig:07 width=50%}
-
-
-9. Сняла с директории dir1 все атрибуты командой
-chmod 000 dir1
-и проверилв с её помощью правильность выполнения команды
-ls -l
-
-Попыталась создать в директории dir1 файл file1 командой
-echo "test" > /home/guest/dir1/file1
-
-Я получила отказ в выполнении операции по созданию файла, так как до этого убрала права на все действия по отношению к данной директории (рис. @fig:08): 
-
-
-![Снятие с dir1 всех атрибутов](image/8.png){#fig:08 width=50%}
-
-11. Заполнила таблицу «Установленные права и разрешённые действия» выполняя действия от имени владельца директории (файлов), определив опытным путём, какие операции разрешены, а какие нет.
-Если операция разрешена, занесла в таблицу знак «+», если не разрешена, знак «-» (рис. @fig:09):
-
-
-![Установленные права и разрешённые действия](image/9.png){#fig:09 width=50%}
-
-![Установленные права и разрешённые действия_2](image/10.png){#fig:10 width=50%}
-
-
-
-12. На основании заполненной таблицы определила те или иные минимально необходимые права для выполнения операций внутри директории dir1 (рис. @fig:11):
-
-![Минимально необходимые права](image/11.png){#fig:11 width=50%}
-
+![Составление второй таблицы](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab2/report/image/15.jpg){#fig:014 width=70%}
 
 # Выводы
 
-В ходе лабораторной работы нам удалось:
-
-Получить практические навыки работы в консоли с атрибутами файлов, закрепить теоретические основы дискреционного разграничения доступа в современных системах с открытым кодом на базе ОС Linux.
+Я получил практические навыки работы в консоли с атрибутами файлов. Так же закрепил теоретическую основу дискреционного разграничения доступа в современных системах с открытым кодом на базе ОС Linux
 
 
-
-
-# Библиография
-1. [Git - система контроля версий](https://github.com/)
-
-2. [Rocky Linux](https://rockylinux.org/)
+:::
