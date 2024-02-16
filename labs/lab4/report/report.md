@@ -1,22 +1,37 @@
 ---
-# Front matter
-lang: ru-RU
-title: "Отчёт по лабораторной работе №4"
+## Front matter
+title: "Лабораторная работа 4"
 subtitle: "Дискреционное разграничение прав в Linux. Расширенные атрибуты"
-author: "Голощапова Ирина Борисовна"
+author: "Лушин Артём Андреевич"
 
-# Formatting
+## Generic otions
+lang: ru-RU
 toc-title: "Содержание"
+
+## Bibliography
+bibliography: bib/cite.bib
+csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
+
+## Pdf output format
 toc: true # Table of contents
-toc_depth: 2
+toc-depth: 2
 lof: true # List of figures
-lot: true # List of tables
 fontsize: 12pt
 linestretch: 1.5
-papersize: a4paper
+papersize: a4
 documentclass: scrreprt
-polyglossia-lang: russian
-polyglossia-otherlangs: english
+## I18n polyglossia
+polyglossia-lang:
+  name: russian
+  options:
+	- spelling=modern
+	- babelshorthands=true
+polyglossia-otherlangs:
+  name: english
+## I18n babel
+babel-lang: russian
+babel-otherlangs: english
+## Fonts
 mainfont: PT Serif
 romanfont: PT Serif
 sansfont: PT Sans
@@ -24,120 +39,93 @@ monofont: PT Mono
 mainfontoptions: Ligatures=TeX
 romanfontoptions: Ligatures=TeX
 sansfontoptions: Ligatures=TeX,Scale=MatchLowercase
-monofontoptions: Scale=MatchLowercase
+monofontoptions: Scale=MatchLowercase,Scale=0.9
+## Biblatex
+biblatex: true
+biblio-style: "gost-numeric"
+biblatexoptions:
+  - parentracker=true
+  - backend=biber
+  - hyperref=auto
+  - language=auto
+  - autolang=other*
+  - citestyle=gost-numeric
+## Pandoc-crossref LaTeX customization
+figureTitle: "Рис."
+tableTitle: "Таблица"
+listingTitle: "Листинг"
+lofTitle: "Список иллюстраций"
+lolTitle: "Листинги"
+## Misc options
 indent: true
-pdf-engine: lualatex
 header-includes:
-  - \linepenalty=10 # the penalty added to the badness of each line within a paragraph (no associated penalty node) Increasing the value makes tex try to have fewer lines in the paragraph.
-  - \interlinepenalty=0 # value of the penalty (node) added after each line of a paragraph.
-  - \hyphenpenalty=50 # the penalty for line breaking at an automatically inserted hyphen
-  - \exhyphenpenalty=50 # the penalty for line breaking at an explicit hyphen
-  - \binoppenalty=700 # the penalty for breaking a line at a binary operator
-  - \relpenalty=500 # the penalty for breaking a line at a relation
-  - \clubpenalty=150 # extra penalty for breaking after first line of a paragraph
-  - \widowpenalty=150 # extra penalty for breaking before last line of a paragraph
-  - \displaywidowpenalty=50 # extra penalty for breaking before last line before a display math
-  - \brokenpenalty=100 # extra penalty for page breaking after a hyphenated line
-  - \predisplaypenalty=10000 # penalty for breaking before a display
-  - \postdisplaypenalty=0 # penalty for breaking after a display
-  - \floatingpenalty = 20000 # penalty for splitting an insertion (can only be split footnote in standard LaTeX)
-  - \raggedbottom # or \flushbottom
+  - \usepackage{indentfirst}
   - \usepackage{float} # keep figures where there are in the text
   - \floatplacement{figure}{H} # keep figures where there are in the text
 ---
 
-# Цели и задачи лабораторной работы
+# Цель работы
 
-## Цели и задачи работы
+Получение практических навыков работы в консоли с расширенными атрибутами файлов.
 
-
-Получение практических навыков работы в консоли с расширенными атрибутами файлов
 
 
 # Выполнение лабораторной работы
 
+1) От имени пользователя "guest" я определил расширенные атрибуты файла "file1". Атрибутов нет.
 
+![Определение атрибутов file1](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/1.jpg){#fig:001 width=70%}
 
-1. От имени пользователя guest определила расширенные атрибуты файла */home/guest/dir1/file1* командой
-$$lsattr /home/guest/dir1/file1$$ 
-и установила на файл file1 права, разрешающие чтение и запись для владельца файла (рис. @fig:01) следующей командой:
-$$chmod \ 600 \ file1$$ 
+2) С помощью команды дал права файлу на чтение и написание.
 
-![Атрибуты файла file](image/1.png){#fig:01 width=50%}
+![Выдача прав](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/2.jpg){#fig:002 width=70%}
 
+3) От имени пользователи "guest" я попробовал установить на файл атрибут "а", но мне выдало ошибку. 
 
-2. Попробовала установить на файл file1 расширенный атрибут a от имени пользователя guest:
-$$chattr +a /home/guest/dir1/file1$$
-В ответ получила отказ от выполнения операции (рис. @fig:02)
+![Выдача атрибута а](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/3.jpg){#fig:003 width=70%}
 
-![Установление расширенных атрибутов на file](image/2.png){#fig:02 width=50%}
+4) Я зашел в другую консоль и выдал права администратора. Затем выдал файлу атрибут "а". Файл получил атрибут успешно.
 
+![Атрибут а у файла](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/4.jpg){#fig:004 width=70%}
 
-3. Зашла на третью консоль с правами администратора. Попробовала установить расширенный атрибут a на файл */home/guest/dir1/file1* от имени суперпользователя:
-$$chattr +a /home/guest/dir1/file1$$
+5) Я проверил наличие атрибута у файла, используя пользователя "guest".
 
-и от пользователя guest проверила правильность установления атрибута (рис. @fig:03):
-$$lsattr /home/guest/dir1/file1$$
+![Проверка атрибутов](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/5.jpg){#fig:005 width=70%}
 
-![Установление атрибутов от имени суперпользователя](image/3.png){#fig:03 width=50%}
+6) Я попытался вписать в файл текст, но у меня выдало ошибку. После проверки текста в самом файле, команда ничего не выдала, так как файл пустой. 
 
-5. Выполнила:
- 
- - дозапись в файл file1 слова «test» командой
-$$echo "test" /home/guest/dir1/file1$$
+![Вписание текста в файл](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/6.jpg){#fig:006 width=70%}
 
- - чтение файла file1 командой
-$$cat /home/guest/dir1/file1$$
+7) Я попробовал переименовать файл, но у меня не получилось. Так же попробовал удалить файл, опять показало ошибку. И удалить содержимое файла я так же не смог. 
 
-Убедитесь, что слово test было успешно записано в file1.
+![Удаление и переименовывание файла](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/7.jpg){#fig:007 width=70%}
 
- - Попробовала удалить файл file1 либо стереть имеющуюся в нём информацию командой
-$$echo "abcd" > /home/guest/dirl/file1$$
- 
- - Попробовала переименовать файл.
+8) Я попытался изменить права у файла, но опять появилась ошибка. 
 
- - Попробовала с помощью команды 
-$$chmod 000 file1$$
+![Изменение прав](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/8.jpg){#fig:008 width=70%}
 
-установить на файл file1 права, например, запрещающие чтение и запись для владельца файла. В итоге нам не удалось успешно выполнить указанные команды (рис. @fig:04):
+9) Я забрал атрибут "а" у файла и проделал все манипуляции снова. Я смог вписать текст в файл, прочитать файл, удалить текст, переименовать файл, сменить атрибуты у файла и удалить файл. 
 
-![Выполнение указанных команд с атрибутом a](image/4.png){#fig:04 width=50%}
+![Удаление атрибута "а"](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/9.jpg){#fig:009 width=70%}
 
+![Проверка без атрибута](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/10.jpg){#fig:010 width=70%}
 
+10) Я добавил вместо атрибута "а", атрибут "i". У меня не получилось вписать текст в файл, переименовать файл, удалить файл и добавить права. 
 
+![Добавление атрибута "i"](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/11.jpg){#fig:011 width=70%}
 
-6. Сняла расширенный атрибут *a* с файла */home/guest/dirl/file1* от
-имени суперпользователя командой
-$$chattr -a /home/guest/dir1/file1$$
-Повторила операции, которые ранее не удавалось выполнить (рис. @fig:05): 
+![Проверка с атрибутом "i"](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/12.jpg){#fig:012 width=70%}
 
-![Выполнение указанных командс атрибутом -a](image/5.png){#fig:05 width=50%}
+11) Я забрал атрибут "i" и проверил всю работоспособность файла. Файл может выполнять все доступные функции. 
 
-7. Повторила действия по шагам, заменив атрибут «a» атрибутом «i» (рис. @fig:06): 
+![Удаление атрибута "i"](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/13.jpg){#fig:013 width=70%}
 
-![Выполнение указанных команд с атрибутом i](image/6.png){#fig:06 width=50%}
+![Проверка без атрибута "i"](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/14.jpg){#fig:014 width=70%}
 
+12) Я составил таблицу сравнения атрибутов "а" и "i". Если убрать все атрибуты, то никаких различий не будет. 
 
-8. Повторила действия по шагам, удалив атрибут i (рис. @fig:07): 
-
-![Выполнение указанных команд с атрибутом -i](image/7.png){#fig:07 width=50%}
-
-
-
-9. Занеслаа полученные данные в таблицу (рис. @fig:08):
-
-![Установленные права и разрешённые действия](image/8.png){#fig:08 width=50%}
-
-
-
+![Таблица сравнения](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab4/report/image/20.jpg){#fig:015 width=70%}
 
 # Выводы
 
-В ходе лабораторной работы мне удалось повысить свои навыки использования интерфейса командой строки (CLI), познакомиться на примерах с тем, как используются основные и расширенные атрибуты при разграничении доступа. Также была возможность связать теорию дискреционного разделения доступа (дискреционная политика безопасности) с её реализацией на практике в ОС Linux. Составила наглядные таблицы, поясняющие какие операции возможны при тех или иных установленных правах. Опробовала действие на практике расширенных атрибутов «а» и «i».
-
-
-
-# Библиография
-1. [Git - система контроля версий](https://github.com/)
-
-2. [Rocky Linux](https://rockylinux.org/)
+Я получил практические навыки работы в консоли с расширенными атрибутами файлов.
