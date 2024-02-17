@@ -1,22 +1,37 @@
 ---
-# Front matter
-lang: ru-RU
-title: "Отчёт по лабораторной работе №5"
-subtitle: "Дискреционное разграничение прав в Linux. Исследование влияния дополнительных атрибутов"
-author: "Голощапова Ирина Борисовна"
+## Front matter
+title: "Лабораторная работа 5"
+subtitle: " Дискреционное разграничение прав в Linux. Исследование влияния дополнительных атрибутов"
+author: "Лушин Артём Андреевич"
 
-# Formatting
+## Generic otions
+lang: ru-RU
 toc-title: "Содержание"
+
+## Bibliography
+bibliography: bib/cite.bib
+csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
+
+## Pdf output format
 toc: true # Table of contents
-toc_depth: 2
+toc-depth: 2
 lof: true # List of figures
-lot: true # List of tables
 fontsize: 12pt
 linestretch: 1.5
-papersize: a4paper
+papersize: a4
 documentclass: scrreprt
-polyglossia-lang: russian
-polyglossia-otherlangs: english
+## I18n polyglossia
+polyglossia-lang:
+  name: russian
+  options:
+	- spelling=modern
+	- babelshorthands=true
+polyglossia-otherlangs:
+  name: english
+## I18n babel
+babel-lang: russian
+babel-otherlangs: english
+## Fonts
 mainfont: PT Serif
 romanfont: PT Serif
 sansfont: PT Sans
@@ -24,162 +39,115 @@ monofont: PT Mono
 mainfontoptions: Ligatures=TeX
 romanfontoptions: Ligatures=TeX
 sansfontoptions: Ligatures=TeX,Scale=MatchLowercase
-monofontoptions: Scale=MatchLowercase
+monofontoptions: Scale=MatchLowercase,Scale=0.9
+## Biblatex
+biblatex: true
+biblio-style: "gost-numeric"
+biblatexoptions:
+  - parentracker=true
+  - backend=biber
+  - hyperref=auto
+  - language=auto
+  - autolang=other*
+  - citestyle=gost-numeric
+## Pandoc-crossref LaTeX customization
+figureTitle: "Рис."
+tableTitle: "Таблица"
+listingTitle: "Листинг"
+lofTitle: "Список иллюстраций"
+lolTitle: "Листинги"
+## Misc options
 indent: true
-pdf-engine: lualatex
 header-includes:
-  - \linepenalty=10 # the penalty added to the badness of each line within a paragraph (no associated penalty node) Increasing the value makes tex try to have fewer lines in the paragraph.
-  - \interlinepenalty=0 # value of the penalty (node) added after each line of a paragraph.
-  - \hyphenpenalty=50 # the penalty for line breaking at an automatically inserted hyphen
-  - \exhyphenpenalty=50 # the penalty for line breaking at an explicit hyphen
-  - \binoppenalty=700 # the penalty for breaking a line at a binary operator
-  - \relpenalty=500 # the penalty for breaking a line at a relation
-  - \clubpenalty=150 # extra penalty for breaking after first line of a paragraph
-  - \widowpenalty=150 # extra penalty for breaking before last line of a paragraph
-  - \displaywidowpenalty=50 # extra penalty for breaking before last line before a display math
-  - \brokenpenalty=100 # extra penalty for page breaking after a hyphenated line
-  - \predisplaypenalty=10000 # penalty for breaking before a display
-  - \postdisplaypenalty=0 # penalty for breaking after a display
-  - \floatingpenalty = 20000 # penalty for splitting an insertion (can only be split footnote in standard LaTeX)
-  - \raggedbottom # or \flushbottom
+  - \usepackage{indentfirst}
   - \usepackage{float} # keep figures where there are in the text
   - \floatplacement{figure}{H} # keep figures where there are in the text
 ---
 
-# Цели и задачи лабораторной работы
+# Цель работы
 
-## Цели и задачи работы
+Изучение механизмов изменения идентификаторов, применения SetUID- и Sticky-битов. Получение практических навыков работы в консоли с дополнительными атрибутами. Рассмотрение работы механизма смены идентификатора процессов пользователей, а также влияние бита Sticky на запись и удаление файлов.
 
-Изучение механизмов изменения идентификаторов, применения
-SetUID- и Sticky-битов. Получение практических навыков работы в консоли с дополнительными атрибутами. Рассмотрение работы механизма
-смены идентификатора процессов пользователей, а также влияние бита Sticky на запись и удаление файлов.
 
 
-# Выполнение лабораторной работы
+# Выполнение лабораторной работы. Созданте программы
 
-## Создание программы
+1) Я создал файл "simpleid.c" и внёс в него программу.
 
+![Первая программа](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/1.jpg){#fig:001 width=70%}
 
-1. С правами администратора установила компилятор gcc (рис. @fig:01)
+2) Скомпилировал программу и убедился, что файл создан правильно.
 
-![Установка gcc](image/1.png){#fig:01 width=50%}
+![Компиляция первой программы](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/2.jpg){#fig:002 width=70%}
 
-2. Отключила систему запретов до очередной перезагрузки системы командой (рис. @fig:02)
+3) Запустил программу и посмотрел, как она работает. Затем прописал команду "id", чтобы сравнить данные. Все данные сходятся. 
 
-![Отключение системы запретов](image/2.png){#fig:02 width=50%}
+![Запуск первой программы](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/3.jpg){#fig:003 width=70%}
 
+4) Создал второй файл и назвал его "simlpeid2.c". Усложнил первую программу и внёс ее в файл.
 
-3. Вошла в систему от имени пользователя guest и создала программу simpleid.c со следующим кодом (рис. @fig:03)
+![Вторая программа](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/4.jpg){#fig:004 width=70%}
 
-![simpleid.c](image/3.png){#fig:03 width=50%}
+5) Скомпилировал и посмотрел вторую программу. Проверил как она работает.
 
+![Запуск второй программы](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/5.jpg){#fig:005 width=70%}
 
-4. Скомплилировала программу и убедилась, что файл программы создан. Далее выполнила программу simpleid и системную программу id, сравнив полученный  результат (рис. @fig:04)
+6) От имени суперпользователя я выполнил команды и временно повысил свои права. Команды сменили пользователя файла на root и установили SetUID-бит. Я запустил файл от имени root-пользователя и проверил сходство с командой "id".
 
-![Выполнение программы simpleid](image/4.png){#fig:04 width=50%}
+![Изменение прав для root](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/6.jpg){#fig:006 width=70%}
 
+![Проверка работы для root](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/7.jpg){#fig:007 width=70%}
 
-5. Усложнила программу, добавив вывод действительных идентификаторов (рис. @fig:05):
+![Установка SetUID-бита](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/8.jpg){#fig:008 width=70%}
 
-![simpleid2.c](image/5.png){#fig:05 width=50%}
+7) Я создал файл "readfile.c". Внёс туда программу.
 
-6. Скомпилировала и запустила simpleid2.c (рис. @fig:06):
+![Программа readfile](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/9.jpg){#fig:009 width=70%}
 
-![Запуск программы simpleid2.c](image/6.png){#fig:06 width=50%}
+8) Скомпилировал программу readfile.
 
-7. От имени суперпользователя выполнила команды, выполнила проверку правильности установки новых атрибутов и смены владельца файла simpleid2 и запустила simpleid2 и id (рис. @fig:07):
+![Компиляция readfile](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/10.jpg){#fig:010 width=70%}
 
-![Установка новых атрибутов и смена владельца simpleid2.c](image/7.png){#fig:07 width=50%}
+9) Я выдал программе "readfile" права так, чтобы root пользователь мог прочитать файл, а простой пользователь нет. 
 
+![Проверка на root u guest пользователях](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/11.jpg){#fig:011 width=70%}
 
+10) Я сменил владельца программы "readfile" на root-пользователя. 
 
+![Смена владельца](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/12.jpg){#fig:012 width=70%}
 
-8. Проделала тоже самое относительно SetGID-бита (рис. @fig:08):
+11) Попытался запустить программу и прочитать два файла с простого пользователя, но программа выдала ошибку. А если запускать с аккаунта root, то программа запускается нормально и работает. Связано это с тем, что владельцем программы является root-пользователь, а у других пользователей нет доступа и прав на использование программы. 
 
-![SetGID-бит](image/8.png){#fig:08 width=50%}
+![Запуск с guest](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/13.jpg){#fig:013 width=70%}
 
+![Запуск с root](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/14.jpg){#fig:014 width=70%}
 
+# Исследование Sticky-бита.
 
-9. Создала программу readfile.c (рис. @fig:09):
+1) Я выяснил, установлен ли атрибут Sticky (t) на директории "/tmp". Атрибут установлен.
 
-![readfile.c](image/9.png){#fig:09 width=50%}
+![Проверка наличия атрибута](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/15.jpg){#fig:015 width=70%}
 
-10. Откомпилировала её. Сменила владельца у файла readfile.c  и изменила права так, чтобы только суперпользователь
-(root) мог прочитать его, a guest не мог (рис. @fig:10). 
+2) От пользователя "guest" я создал файл "file01.txt" в  директории "/tmp". Вписал в файл слово "test". И дал права на чтение и запись для категории "все остальные (о)".
 
-![Смена владельца readfile.c](image/10.png){#fig:10 width=50%}
+![Выдача прав для файла](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/16.jpg){#fig:016 width=70%}
 
-Проверила, что пользователь guest не может прочитать файл readfile.c (рис. @fig:11):
+3) От пользователя "guest2", который не явлется владельцем, я попробовал прочитать файл. Я могу прочитать файл. Но не могу дописывать содержимое, вписывать новое или удалять этот файл. 
 
-![Чтение readfile.c от имени guest](image/11.png){#fig:11 width=50%}
+![Проверка от второго пользователя](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/17.jpg){#fig:017 width=70%}
 
+4) я отключил атрибут "t" у директории "/tmp". Попробовал повторить все предыдущие действия. Я так же не смог вписать в файл данные или дописать их. Но смог прочитать файл и удалить его. 
 
+![Проверка без атрибута](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/18.jpg){#fig:018 width=70%}
 
+5) Чтобы в дальнейшем у меня не было проблем в работе с директорией "/tmp" я вернул атрибут на директорию, используя суперпользователя. 
 
-11. Сменила у программы readfile владельца и установила SetU’D-бит (рис. @fig:12).
+![Возвращение атрибута](/home/aalushin/work/study/study_2023-2024_infosec/labs/lab5/report/image/19.jpg){#fig:019 width=70%}
 
-![Смена владельца readfile.c](image/12.png){#fig:12 width=50%}
+# ВАЖНОЕ ПРИМЕЧАНИЕ
 
-Проверила, может ли программа readfile прочитать файл readfile.c.
-
-Проверила, может ли программа readfile прочитать файл /etc/shadow (рис. @fig:13).
-
- - От имени пользователя guest:
-
-![От имени пользователя guest: readfile.c](image/13.png){#fig:13 width=50%}
-
- - С правами администратора (рис. @fig:14): 
-
-![readfile.c с правами администратора](image/14.png){#fig:14 width=50%}
-
-Чтение файла /etc/shadow (рис. @fig:15)
-
-![/etc/shadow](image/15.png){#fig:15 width=50%}
-
-
-
-## Исследование Sticky-бита
-
-1. Выяснила, что установлен атрибут Sticky на директории /tmp  (рис. @fig:16)
-
-![Наличие атрибута Sticky](image/16.png){#fig:16 width=50%}
-
-2. От имени пользователя guest создала файл file01.txt в директории /tmp со словом test. Просмотрела атрибуты у только что созданного файла и разрешила чтение и запись для категории пользователей «все остальные» (рис. @fig:17)
-
-![file01.txt](image/17.png){#fig:17 width=50%}
-
-
-
-3. От пользователя guest2 (не являющегося владельцем) попробовала прочитать файл /tmp/file01.txt, дозаписать в файл слово test2, проверить содержимое файла, записать в файл слово test3, стерев при этом всю имеющуюся в файле информацию командой и снова проверить содержимое файла. Затем попробовала удалить файл - не получилось (рис. @fig:18)
-
-![Операции с file01.txt](image/18.png){#fig:18 width=50%}
-
-4. Повысила свои права до суперпользователя 
-и выполнила после этого команду, снимающую атрибут t (Sticky-бит) с директории. От пользователя guest2 проверила, что атрибута t у директории /tmp нет (рис. @fig:19)
-
-![Снятие атрибута t](image/19.png){#fig:19 width=50%}
-
-5. Повторила предыдущие шаги (рис. @fig:20)
-
-![Повторение операций над файлом](image/20.png){#fig:20 width=50%}
-
-6. Повысила свои права до суперпользователя и вернула атрибут t на директорию /tmp (рис. @fig:21)
-
-![Добавление атрибута t](image/21.png){#fig:21 width=50%}
+По итогам лабораторной работы я понял, что Sticky-бит создан для защиты файла от удаления. Даже не смотря на то, что я дал права на запись и чтение файлов для категории "все остальные", я не смог вписать в файл данные с пользователя "guest2". А не смог я это сделать, так как этот аккаунт у меня находится в группе с "guest". То есть я не дал права на вписывание для категории "группа", но дал права для категории "все остальные". Из-за этого Sticky-бит не влиял на возможность записи, а влиял только на возможность удаления. А изменять файл я не мог, так как мой аккаунт находился не в той группе. Если бы я использовал другой аккаунт, который не находится в группе, результаты бы были другие.
 
 # Выводы
 
-В ходе лабораторной работы мне удалось:
-
- - Изучить механизмы изменения идентификаторов, применения SetUID- и Sticky-битов. 
- 
- - Получить практических навыков работы в консоли с дополнительными атрибутами. 
- 
- - Рассмотреть работу механизма смены идентификатора процессов пользователей, а также влияние бита Sticky на запись и удаление файлов.
-
-
-
-# Библиография
-1. [Git - система контроля версий](https://github.com/)
-
-2. [Rocky Linux](https://rockylinux.org/)
+Я изучил механизмы изменения идентификатора, применил SetUID-бит и Stickу-бит. Получил практические навыки работы в консоли с дополнительными атрибутами. Рассмотрел работы механизма смены идентификатора процессов пользователя, а так же влияние бита Sticky на запись и удаление файлов. 
